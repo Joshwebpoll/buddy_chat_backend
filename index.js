@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const cron = require("node-cron");
+const axios = require("axios");
 const http = require("http");
 const { Server } = require("socket.io");
 const app = express();
@@ -26,7 +28,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 
+// Simple route to respond to pings
+app.get("/ping", (req, res) => {
+  res.send("pong");
+});
 // Routes
+
 app.use("/api/v1/auth", userAuthRoute);
 app.use("/api/v1/chat", chatRoute);
 
@@ -49,3 +56,18 @@ const startServer = async () => {
 };
 
 startServer();
+
+// Cron Job: Only runs in production
+if (process.env.NODE_ENV === "production") {
+  cron.schedule("*/14 * * * *", async () => {
+    const url = process.env.RENDER_URL || `http://localhost:${port}/ping`;
+
+    try {
+      console.log(`[Cron] Pinging ${url}...`);
+      const response = await axios.get(url);
+      console.log(`[Cron] Ping response: ${response.status}`);
+    } catch (error) {
+      console.error("[Cron] Ping failed:", error.message);
+    }
+  });
+}
