@@ -83,15 +83,15 @@ const chatSocket = (io) => {
         };
 
         const before = await Chat.find(filter);
-        console.log("Before update:", before.length, "messages");
+        // console.log("Before update:", before.length, "messages");
 
         const result = await Chat.updateMany(filter, {
           $set: { isRead: true },
         });
-        console.log("Updated count:", result.modifiedCount);
+        //console.log("Updated count:", result.modifiedCount);
 
         const after = await Chat.find(filter);
-        console.log("After update:", after.length, "messages");
+        //console.log("After update:", after.length, "messages");
 
         io.to(from).emit("mark-read", {
           senderId: socket.user,
