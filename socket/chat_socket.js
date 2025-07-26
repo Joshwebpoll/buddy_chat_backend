@@ -44,7 +44,7 @@ const chatSocket = (io) => {
             ...messages.toObject(),
             senderUser,
           };
-          console.log(fullMessage);
+
           io.to(recieverId).emit("chatMessage", fullMessage);
         }
       } catch (error) {
@@ -55,20 +55,47 @@ const chatSocket = (io) => {
     });
 
     // 🔹 Handle mark as read
+    // socket.on("mark-read", async ({ from }) => {
+    //   try {
+    //     const data = await Chat.updateMany(
+    //       {
+    //         sender: from,
+    //         receiver: socket.user,
+    //         isRead: false,
+    //       },
+    //       { $set: { isRead: true } }
+    //     );
+    //     io.to(from).emit("mark-read", {
+    //       senderId: socket.user,
+    //     });
+    //     console.log("Messages marked as read", data);
+    //   } catch (err) {
+    //     console.error("Failed to mark messages as read:", err);
+    //   }
+    // });
     socket.on("mark-read", async ({ from }) => {
+      console.log(from, "kkkkBosss");
       try {
-        await Chat.updateMany(
-          {
-            sender: from,
-            receiver: socket.user,
-            isRead: false,
-          },
-          { $set: { isRead: true } }
-        );
+        const filter = {
+          sender: from,
+          receiver: socket.user,
+          isRead: false,
+        };
+
+        const before = await Chat.find(filter);
+        console.log("Before update:", before.length, "messages");
+
+        const result = await Chat.updateMany(filter, {
+          $set: { isRead: true },
+        });
+        console.log("Updated count:", result.modifiedCount);
+
+        const after = await Chat.find(filter);
+        console.log("After update:", after.length, "messages");
+
         io.to(from).emit("mark-read", {
           senderId: socket.user,
         });
-        console.log("Messages marked as read");
       } catch (err) {
         console.error("Failed to mark messages as read:", err);
       }

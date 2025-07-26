@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const getUserMessage = async (req, res) => {
   // console.log(req.user.userid, "hello", req.params.userId);
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = parseInt(req.query.skip) || 0;
   try {
     const messages = await Chat.find({
       $or: [
@@ -14,7 +16,9 @@ const getUserMessage = async (req, res) => {
     })
       // .populate("sender", "-password") // Populate sender details, exclude password
       // .populate("receiver", "-password")
-      .sort({ createdAt: 1 });
+      .sort({ createdAt: 1 })
+      .skip(skip)
+      .limit(limit);
     return res.status(StatusCodes.OK).json({
       messages: messages,
     });
