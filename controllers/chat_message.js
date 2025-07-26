@@ -4,7 +4,7 @@ const Chat = require("../models/chat_message");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const getUserMessage = async (req, res) => {
-  console.log(req.user.userid, "hello", req.params.userId);
+  // console.log(req.user.userid, "hello", req.params.userId);
   try {
     const messages = await Chat.find({
       $or: [
@@ -27,7 +27,7 @@ const getUserMessage = async (req, res) => {
 };
 const createMessage = async (req, res) => {
   const { message, receiver } = req.body;
-
+  const result = req.file;
   const io = req.app.locals.io;
   if (!message || !receiver) {
     return res
@@ -40,6 +40,8 @@ const createMessage = async (req, res) => {
       sender: req.user.userid,
       message: message,
       receiver: receiver,
+      imageUrl: result.path,
+      cloudinaryId: result.filename,
     });
 
     const messages = await saveChat.save();
@@ -198,4 +200,8 @@ const getMessagePreviews = async (req, res) => {
   }
 };
 
-module.exports = { createMessage, getMessagePreviews, getUserMessage };
+module.exports = {
+  createMessage,
+  getMessagePreviews,
+  getUserMessage,
+};

@@ -26,7 +26,7 @@ const registerUser = async (req, res) => {
   const { email, name, password } = req.body;
   const result = req.file;
   try {
-    if (!email || !name || !password) {
+    if (!email || !name || !password || !result) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ status: false, message: "All field are required" });
@@ -59,7 +59,7 @@ const registerUser = async (req, res) => {
       cloudinaryId: result.filename,
       verificationTokenExpiresAt: Date.now() + 1 * 60 * 60 * 1000, // 1 hours
     });
-    await user.save();
+    const userx = await user.save();
 
     const tokens = generateJwtCookiesToken(res, user._id);
     sendEmailToNewUsers(email, name, verificationToken);
@@ -67,11 +67,12 @@ const registerUser = async (req, res) => {
     return res.status(StatusCodes.CREATED).json({
       success: true,
       message: "User created successfully",
-      user: {
-        ...user._doc,
-        password: undefined,
-        token: tokens,
-      },
+      // verificationCode: userx.verificationToken,
+      // user: {
+      //   ...user._doc,
+      //   password: undefined,
+      //   token: tokens,
+      // },
     });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
@@ -138,19 +139,19 @@ const loginUser = async (req, res) => {
         .json({ success: false, message: "Invalid Email Address or Password" });
     }
 
-    if (!user.isverified) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: "Email is not verified. Please verify your email first",
-      });
-    }
+    // if (!user.isverified) {
+    //   return res.status(StatusCodes.BAD_REQUEST).json({
+    //     success: false,
+    //     message: "Email is not verified. Please verify your email first",
+    //   });
+    // }
 
-    if (user.status === "disabled") {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: "Your account is disabled. Please contact your administrator",
-      });
-    }
+    // if (user.status === "disabled") {
+    //   return res.status(StatusCodes.BAD_REQUEST).json({
+    //     success: false,
+    //     message: "Your account is disabled. Please contact your administrator",
+    //   });
+    // }
     user.lastLogin = Date.now();
     await user.save();
     const tokens = generateJwtCookiesToken(res, user._id);
@@ -455,6 +456,31 @@ const getSingleUser = async (req, res) => {
   const user = await User.findById(req.user.userid).select("-password");
   res.json(user);
 };
+
+const uploadPhoto = async (req, res) => {
+  const userId = req.user.userid;
+  const result = req.file;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          imageUrl: result.path,
+          cloudinaryId: result.filename,
+        },
+      },
+      { new: true }
+    );
+
+    return res
+      .status(StatusCodes.OK)
+      .json({ status: true, image: updatedUser.imageUrl });
+  } catch (error) {
+    return res
+      .status(StatusCodes.BAD_GATEWAY)
+      .json({ message: "Something went wrong" });
+  }
+};
 module.exports = {
   registerUser,
   getSingleUser,
@@ -469,4 +495,5 @@ module.exports = {
   resetUserPasswordOtpMobile,
   updatePasswordOtpMobile,
   fetchUsers,
+  uploadPhoto,
 };

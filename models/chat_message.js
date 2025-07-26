@@ -7,8 +7,13 @@ const chatSchema = new mongoose.Schema(
     receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     message: {
       type: String,
+      default: null,
     },
     imageUrl: {
+      type: String,
+      default: null,
+    },
+    name: {
       type: String,
       default: null,
     },
@@ -16,6 +21,7 @@ const chatSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+
     isRead: { type: Boolean, default: false },
   },
   { timestamps: true }

@@ -15,6 +15,7 @@ const {
   updatePasswordOtpMobile,
   fetchUsers,
   getSingleUser,
+  uploadPhoto,
 } = require("../controllers/userAuthController");
 const protectRoute = require("../middlewares/protectRoute");
 const upload = require("../config/multer");
@@ -34,5 +35,6 @@ router.post("/resendCode", ResendVerificationEmailToUser);
 router.post("/resendEmailCode", resendEmailVerificationCode);
 router.get("/profile", protectRoute, fetchUsers);
 router.get("/me", protectRoute, getSingleUser);
+router.post("/upload", protectRoute, upload.single("image"), uploadPhoto);
 
 module.exports = router;

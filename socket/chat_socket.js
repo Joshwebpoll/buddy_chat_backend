@@ -20,33 +20,33 @@ const chatSocket = (io) => {
     }
   });
   io.on("connection", (socket) => {
-    console.log(`✅ User connected: ${socket.user} (socket: ${socket.id})`);
+    // console.log(`✅ User connected: ${socket.user} (socket: ${socket.id})`);
     onlineUsers.set(socket.user, socket.id);
     console.log("👥 Online Users:", onlineUsers);
     socket.on("chatMessage", async (data) => {
-      console.log("i am checking", data);
       try {
-        onlineUsers.set(socket.user, socket.id);
         const saveChat = new Chat({
           sender: socket.user,
           receiver: data.to,
           message: data.message,
+          imageUrl: data.imageUrl,
+          name: data.name,
         });
         const messages = await saveChat.save();
-        // const chatThread = new ChatThered({
-        //   sender: socket.user,
-        //   receiver: data.to,
-        //   lastMessage: data.message,
-        //   UnreadMessage: false,
-        // });
         const recieverId = onlineUsers.get(data.to);
-        console.log(recieverId, "helloh");
+        //const sender = onlineUsers.get(socket.user);
         if (recieverId) {
-          io.to(recieverId).emit("chatMessage", messages);
-          console.log(messages);
+          const senderUser = await User.findById(data.sender).select(
+            "name imageUrl"
+          );
+
+          const fullMessage = {
+            ...messages.toObject(),
+            senderUser,
+          };
+          console.log(fullMessage);
+          io.to(recieverId).emit("chatMessage", fullMessage);
         }
-        //io.emit("chatMessage", messages);
-        console.log(onlineUsers);
       } catch (error) {
         console.log(error);
         onlineUsers.delete(socket.user);
