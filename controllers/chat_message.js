@@ -16,7 +16,7 @@ const getUserMessage = async (req, res) => {
     })
       // .populate("sender", "-password") // Populate sender details, exclude password
       // .populate("receiver", "-password")
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
     return res.status(StatusCodes.OK).json({
