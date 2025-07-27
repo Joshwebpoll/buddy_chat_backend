@@ -2,12 +2,12 @@ const StatusCodes = require("http-status-codes");
 const User = require("../models/userModel");
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
-// const {
-//   sendEmailToNewUsers,
-//   sendMailVerificationSuccess,
-//   sendForgotEmailLink,
-//   sendResetSuccessEmail,
-// } = require("../mailtrap/sendEmailsToUser");
+const {
+  sendEmailToNewUsers,
+  sendMailVerificationSuccess,
+  sendForgotEmailLink,
+  sendResetSuccessEmail,
+} = require("../mailtrap/sendEmailsToUser");
 const generateJwtCookiesToken = require("../libs/generateJwtTokenCookies");
 // const uploadImage = async (req, res) => {
 //   const result = req.file;
@@ -75,7 +75,6 @@ const registerUser = async (req, res) => {
       // },
     });
   } catch (error) {
-    console.log(error);
     return res.status(400).json({ success: false, message: error.message });
   }
 };
