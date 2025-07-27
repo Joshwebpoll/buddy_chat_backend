@@ -62,7 +62,7 @@ const registerUser = async (req, res) => {
     const userx = await user.save();
 
     const tokens = generateJwtCookiesToken(res, user._id);
-    sendEmailToNewUsers(email, name, verificationToken);
+    // sendEmailToNewUsers(email, name, verificationToken);
 
     return res.status(StatusCodes.CREATED).json({
       success: true,
