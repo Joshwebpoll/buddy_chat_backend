@@ -22,7 +22,7 @@ const chatSocket = (io) => {
   io.on("connection", (socket) => {
     // console.log(`✅ User connected: ${socket.user} (socket: ${socket.id})`);
     onlineUsers.set(socket.user, socket.id);
-    console.log("👥 Online Users:", onlineUsers);
+    // console.log("👥 Online Users:", onlineUsers);
     socket.on("chatMessage", async (data) => {
       try {
         const saveChat = new Chat({
@@ -48,7 +48,7 @@ const chatSocket = (io) => {
           io.to(recieverId).emit("chatMessage", fullMessage);
         }
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         onlineUsers.delete(socket.user);
         socket.emit("errorMessage", { error: "Failed to save" });
       }
@@ -74,7 +74,7 @@ const chatSocket = (io) => {
     //   }
     // });
     socket.on("mark-read", async ({ from }) => {
-      console.log(from, "kkkkBosss");
+      // console.log(from, "kkkkBosss");
       try {
         const filter = {
           sender: from,
