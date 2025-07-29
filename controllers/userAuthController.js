@@ -61,8 +61,8 @@ const registerUser = async (req, res) => {
       password,
       name,
       verificationToken,
-      imageUrl: result.path,
-      cloudinaryId: result.filename,
+      imageUrl: result ? result.path : null,
+      cloudinaryId: result ? result.filename : null,
       verificationTokenExpiresAt: Date.now() + 1 * 60 * 60 * 1000, // 1 hours
     });
     const userx = await user.save();
