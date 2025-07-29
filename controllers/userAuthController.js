@@ -9,7 +9,7 @@ const {
   sendResetSuccessEmail,
 } = require("../mailtrap/sendEmailsToUser");
 const generateJwtCookiesToken = require("../libs/generateJwtTokenCookies");
-const UserEcom = require("../models/userEcom");
+
 // const uploadImage = async (req, res) => {
 //   const result = req.file;
 //   try {
