@@ -502,5 +502,4 @@ module.exports = {
   updatePasswordOtpMobile,
   fetchUsers,
   uploadPhoto,
-  registerEcomm,
 };
