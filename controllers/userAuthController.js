@@ -9,6 +9,7 @@ const {
   sendResetSuccessEmail,
 } = require("../mailtrap/sendEmailsToUser");
 const generateJwtCookiesToken = require("../libs/generateJwtTokenCookies");
+const UserEcom = require("../models/userEcom");
 // const uploadImage = async (req, res) => {
 //   const result = req.file;
 //   try {
@@ -26,10 +27,15 @@ const registerUser = async (req, res) => {
   const { email, name, password } = req.body;
   const result = req.file;
   try {
-    if (!email || !name || !password || !result) {
+    if (!email || !name || !password) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ status: false, message: "All field are required" });
+    }
+    if (platform === "web" && !result) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "Image is required." });
     }
     if (password.length < 6) {
       return res
@@ -496,4 +502,5 @@ module.exports = {
   updatePasswordOtpMobile,
   fetchUsers,
   uploadPhoto,
+  registerEcomm,
 };
