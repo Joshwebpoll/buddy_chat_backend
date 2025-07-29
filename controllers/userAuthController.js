@@ -24,7 +24,7 @@ const generateJwtCookiesToken = require("../libs/generateJwtTokenCookies");
 // };
 
 const registerUser = async (req, res) => {
-  const { email, name, password } = req.body;
+  const { email, name, password, platform } = req.body;
   const result = req.file;
   try {
     if (!email || !name || !password) {
