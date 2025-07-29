@@ -8,21 +8,27 @@ const onlineUsers = new Map();
 const chatSocket = (io) => {
   io.use((socket, next) => {
     const token = socket.handshake.auth.token;
-
+    console.log(token);
+    if (!token) {
+      return next(new Error("Authentication token missing"));
+    }
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
       socket.user = decoded.userid;
 
       next();
     } catch (err) {
-      console.log(err);
-      next(new Error("Authentication error"));
+      if (err.name === "TokenExpiredError") {
+        console.error("JWT expired:", err.expiredAt);
+        return next(new Error("Token expired. Please log in again."));
+      }
+      return next(new Error("Authentication error"));
     }
   });
   io.on("connection", (socket) => {
     // console.log(`✅ User connected: ${socket.user} (socket: ${socket.id})`);
     onlineUsers.set(socket.user, socket.id);
-    // console.log("👥 Online Users:", onlineUsers);
+    //console.log("👥 Online Users:", onlineUsers);
     socket.on("chatMessage", async (data) => {
       try {
         const saveChat = new Chat({
