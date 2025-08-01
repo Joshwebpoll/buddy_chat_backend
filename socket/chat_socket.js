@@ -1,4 +1,3 @@
-const { handleChatMessage } = require("../controllers/chat_message");
 const jwt = require("jsonwebtoken");
 const Chat = require("../models/chat_message");
 
@@ -30,6 +29,7 @@ const chatSocket = (io) => {
     onlineUsers.set(socket.user, socket.id);
     console.log("👥 Online Users:", onlineUsers);
     socket.on("chatMessage", async (data) => {
+      console.log(data);
       try {
         const saveChat = new Chat({
           sender: socket.user,
