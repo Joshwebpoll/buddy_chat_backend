@@ -1,13 +1,14 @@
 const { handleChatMessage } = require("../controllers/chat_message");
 const jwt = require("jsonwebtoken");
 const Chat = require("../models/chat_message");
-const ChatThered = require("../models/chat_thread");
+
 const User = require("../models/userModel");
 require("dotenv").config();
 const onlineUsers = new Map();
 const chatSocket = (io) => {
   io.use((socket, next) => {
     const token = socket.handshake.auth.token;
+    console.log(token);
     if (!token) {
       return next(new Error("Authentication token missing"));
     }
@@ -27,7 +28,7 @@ const chatSocket = (io) => {
   io.on("connection", (socket) => {
     // console.log(`✅ User connected: ${socket.user} (socket: ${socket.id})`);
     onlineUsers.set(socket.user, socket.id);
-    // console.log("👥 Online Users:", onlineUsers);
+    console.log("👥 Online Users:", onlineUsers);
     socket.on("chatMessage", async (data) => {
       try {
         const saveChat = new Chat({
