@@ -80,7 +80,7 @@ const chatSocket = (io) => {
     //   }
     // });
     socket.on("mark-read", async ({ from }) => {
-      // console.log(from, "kkkkBosss");
+      console.log(from, "mark");
       try {
         const filter = {
           sender: from,
